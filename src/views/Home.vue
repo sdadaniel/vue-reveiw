@@ -1,18 +1,48 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    {{ contentHeight }}
+    <p
+      class="title"
+      v-for="item in items"
+      :key="item.id"
+      @click="openDetail(item)"
+    >
+      {{ item.name }}
+    </p>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
+import itemData from "@/mixins/itemData";
 export default {
   name: "Home",
-  components: {
-    HelloWorld,
+  mixins: [itemData],
+  data() {
+    return { contentHeight: null };
+  },
+
+  mounted() {
+    console.log("Mounted");
+    this.contentHeight = document.documentElement.scrollHeight;
+    window.parent.postMessage({ height: this.contentHeight }, "*");
+  },
+  methods: {
+    openDetail(item) {
+      window.parent.postMessage({ detailId: item.id }, "*");
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.home {
+  width: 100%;
+  height: 300px;
+
+  .title {
+    padding: 50px 0px;
+    background: #eee;
+    box-shadow: #333;
+  }
+}
+</style>
